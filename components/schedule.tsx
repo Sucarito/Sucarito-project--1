@@ -3,7 +3,7 @@ import { Sunrise, Sun, Sunset, Moon } from "lucide-react"
 
 export default function Schedule() {
   return (
-    <section id="schedule" className="pt-24 pb-20 bg-stone-100">
+    <section id="schedule" className="py-20 bg-stone-100">
       <div className="container px-4 mx-auto">
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-stone-800">Daily Schedule</h2>
 

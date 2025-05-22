@@ -1,6 +1,6 @@
 export default function About() {
   return (
-    <section id="about" className="py-20 pb-24 bg-stone-50">
+    <section id="about" className="py-20 bg-stone-50">
       <div className="container px-4 mx-auto">
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-stone-800">
           About Burmese Vihar, Bodhgaya

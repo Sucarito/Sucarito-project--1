@@ -1,152 +1,143 @@
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+"use client"
+
+import { useEffect, useState } from "react"
+import { useSearchParams } from "next/navigation"
 import Link from "next/link"
-import { CheckCircle2, ArrowLeft, Calendar, Download } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Check } from "lucide-react"
+import { verifyPaymentStatus, verifySubscriptionStatus } from "../actions"
 
 export default function DonationSuccessPage() {
+  const searchParams = useSearchParams()
+  const [status, setStatus] = useState<"loading" | "success" | "error">("loading")
+  const [amount, setAmount] = useState<number | null>(null)
+  const [currency, setCurrency] = useState<string>("usd")
+  const [errorMessage, setErrorMessage] = useState<string>("")
+
+  useEffect(() => {
+    async function verifyPayment() {
+      const paymentIntentId = searchParams.get("payment_intent")
+      const subscriptionId = searchParams.get("subscription")
+
+      if (paymentIntentId) {
+        const result = await verifyPaymentStatus(paymentIntentId)
+        if (result.success && result.status === "succeeded") {
+          setStatus("success")
+          setAmount(result.amount)
+          setCurrency(result.currency)
+        } else {
+          setStatus("error")
+          setErrorMessage(result.error || "Payment verification failed")
+        }
+      } else if (subscriptionId) {
+        const result = await verifySubscriptionStatus(subscriptionId)
+        if (result.success && ["active", "trialing"].includes(result.status)) {
+          setStatus("success")
+          setAmount(result.amount)
+          setCurrency(result.currency)
+        } else {
+          setStatus("error")
+          setErrorMessage(result.error || "Subscription verification failed")
+        }
+      } else {
+        setStatus("error")
+        setErrorMessage("No payment information found")
+      }
+    }
+
+    verifyPayment()
+  }, [searchParams])
+
   return (
-    <main className="min-h-screen pt-24 pb-16 bg-stone-50">
-      <div className="container px-4 mx-auto">
-        <div className="max-w-2xl mx-auto">
-          <div className="mb-8">
-            <Link href="/" className="inline-flex items-center text-amber-600 hover:text-amber-700">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Home
-            </Link>
-          </div>
+    <main className="min-h-screen flex items-center justify-center bg-stone-50 py-20">
+      <div className="container px-4 md:px-6">
+        <div className="max-w-3xl mx-auto text-center bg-white p-12 rounded-xl shadow-xl">
+          {status === "loading" && (
+            <>
+              <div className="w-24 h-24 border-4 border-amber-600 border-t-transparent rounded-full animate-spin mx-auto mb-8"></div>
+              <h2 className="text-3xl md:text-4xl font-serif font-light text-stone-800 mb-6">
+                Verifying Your Donation
+              </h2>
+              <p className="text-xl text-stone-700 mb-8 leading-relaxed">
+                Please wait while we confirm your donation...
+              </p>
+            </>
+          )}
 
-          <Card className="border-none shadow-md overflow-hidden">
-            <div className="bg-amber-600 p-6 text-center">
-              <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-white mb-4">
-                <CheckCircle2 className="h-8 w-8 text-amber-600" />
+          {status === "success" && (
+            <>
+              <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-8">
+                <Check className="h-12 w-12 text-green-600" />
               </div>
-              <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">Thank You for Your Donation!</h1>
-              <p className="text-amber-100">Your support means the world to our community.</p>
-            </div>
-
-            <CardContent className="p-6">
-              <div className="space-y-6">
-                <div className="bg-amber-50 rounded-lg p-4 border border-amber-100">
-                  <h2 className="font-semibold text-amber-800 mb-2">Donation Details</h2>
-                  <div className="grid grid-cols-2 gap-2 text-sm">
-                    <div className="text-stone-500">Amount:</div>
-                    <div className="font-medium text-stone-700">$100.00</div>
-                    <div className="text-stone-500">Date:</div>
-                    <div className="font-medium text-stone-700">May 17, 2025</div>
-                    <div className="text-stone-500">Transaction ID:</div>
-                    <div className="font-medium text-stone-700">TXN123456789</div>
-                    <div className="text-stone-500">Payment Method:</div>
-                    <div className="font-medium text-stone-700">Credit Card (ending in 1234)</div>
-                  </div>
-                </div>
-
-                <p className="text-stone-600">
-                  A receipt has been sent to your email address. If you have any questions about your donation, please
-                  contact us at <span className="text-amber-600">donations@burmesevihar.org</span>.
-                </p>
-
-                <div className="flex flex-wrap gap-4 pt-2">
-                  <Button className="flex items-center gap-2">
-                    <Download className="h-4 w-4" />
-                    <span>Download Receipt</span>
-                  </Button>
-                  <Button variant="outline" className="flex items-center gap-2 border-amber-600 text-amber-700">
-                    <Calendar className="h-4 w-4" />
-                    <span>Add to Calendar</span>
-                  </Button>
-                </div>
-
-                <div className="border-t border-stone-200 pt-6 mt-6">
-                  <h3 className="font-semibold text-stone-800 mb-4">What Your Donation Supports</h3>
-                  <div className="space-y-3">
-                    <div className="flex items-start gap-3">
-                      <CheckCircle2 className="h-5 w-5 text-amber-600 mt-0.5" />
-                      <div>
-                        <p className="font-medium text-stone-700">Temple Maintenance</p>
-                        <p className="text-sm text-stone-500">
-                          Keeping our sacred spaces beautiful and functional for all visitors
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <CheckCircle2 className="h-5 w-5 text-amber-600 mt-0.5" />
-                      <div>
-                        <p className="font-medium text-stone-700">Monastic Support</p>
-                        <p className="text-sm text-stone-500">
-                          Providing for the daily needs of our resident monks and nuns
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <CheckCircle2 className="h-5 w-5 text-amber-600 mt-0.5" />
-                      <div>
-                        <p className="font-medium text-stone-700">Community Programs</p>
-                        <p className="text-sm text-stone-500">
-                          Funding meditation classes, cultural events, and educational initiatives
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+              <h2 className="text-3xl md:text-4xl font-serif font-light text-stone-800 mb-6">
+                Thank You for Your Generous Donation
+              </h2>
+              <div className="h-px w-32 bg-amber-500 mx-auto mb-8"></div>
+              <p className="text-xl text-stone-700 mb-4 leading-relaxed">
+                Your contribution of{" "}
+                <span className="font-medium">
+                  {new Intl.NumberFormat("en-US", {
+                    style: "currency",
+                    currency: currency,
+                  }).format(amount || 0)}
+                </span>{" "}
+                has been received.
+              </p>
+              <p className="text-stone-700 mb-8 leading-relaxed">We've sent a confirmation to your email address.</p>
+              <p className="text-stone-600 mb-12">
+                Your donation helps us maintain our historic temple, provide educational programs, support our resident
+                monks, and continue our community outreach efforts.
+              </p>
+              <div className="flex flex-wrap gap-4 justify-center">
+                <Button asChild className="bg-amber-600 hover:bg-amber-700 rounded-none px-8 py-6 text-lg">
+                  <Link href="/">Return to Homepage</Link>
+                </Button>
+                <Button
+                  asChild
+                  variant="outline"
+                  className="border-amber-600 text-amber-700 hover:bg-amber-50 rounded-none px-8 py-6 text-lg"
+                >
+                  <Link href="/donate">Make Another Donation</Link>
+                </Button>
               </div>
-            </CardContent>
-          </Card>
+            </>
+          )}
 
-          <div className="mt-8 text-center">
-            <p className="text-stone-600 mb-4">Share your support with others</p>
-            <div className="flex justify-center space-x-4">
-              <Button variant="outline" size="icon" className="rounded-full">
+          {status === "error" && (
+            <>
+              <div className="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-8">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
+                  className="h-12 w-12 text-red-600"
                   fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="text-amber-600"
-                >
-                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
-                </svg>
-              </Button>
-              <Button variant="outline" size="icon" className="rounded-full">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
                   viewBox="0 0 24 24"
-                  fill="none"
                   stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="text-amber-600"
                 >
-                  <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
-              </Button>
-              <Button variant="outline" size="icon" className="rounded-full">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="text-amber-600"
+              </div>
+              <h2 className="text-3xl md:text-4xl font-serif font-light text-stone-800 mb-6">
+                There Was an Issue with Your Donation
+              </h2>
+              <div className="h-px w-32 bg-amber-500 mx-auto mb-8"></div>
+              <p className="text-xl text-stone-700 mb-8 leading-relaxed">
+                {errorMessage || "We couldn't process your donation at this time."}
+              </p>
+              <p className="text-stone-600 mb-12">Please try again or contact us for assistance with your donation.</p>
+              <div className="flex flex-wrap gap-4 justify-center">
+                <Button asChild className="bg-amber-600 hover:bg-amber-700 rounded-none px-8 py-6 text-lg">
+                  <Link href="/donate">Try Again</Link>
+                </Button>
+                <Button
+                  asChild
+                  variant="outline"
+                  className="border-amber-600 text-amber-700 hover:bg-amber-50 rounded-none px-8 py-6 text-lg"
                 >
-                  <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
-                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                  <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line>
-                </svg>
-              </Button>
-            </div>
-          </div>
+                  <Link href="/contact">Contact Support</Link>
+                </Button>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </main>
