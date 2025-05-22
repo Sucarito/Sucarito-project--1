@@ -1,19 +1,18 @@
 import type React from "react"
 import type { Metadata } from "next"
+import { Inter } from "next/font/google"
 import "./globals.css"
+import Header from "@/components/header"
+import Footer from "@/components/footer"
+import { ThemeProvider } from "@/components/theme-provider"
+
+const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "v0 App",
-  description: "Created with v0",
-  generator: "v0.dev",
-}
-
-export const viewport = {
-  width: "device-width",
-  initialScale: 1,
-  minimumScale: 1,
-  maximumScale: 1,
-  userScalable: false,
+  title: "Burmese Vihar Bodhgaya - A Place of Peace and Mindfulness",
+  description:
+    "A historic Buddhist monastery established in 1936, offering meditation facilities, study resources, and pilgrimage support.",
+    generator: 'v0.dev'
 }
 
 export default function RootLayout({
@@ -22,8 +21,14 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body className={inter.className}>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
+          <Header />
+          {children}
+          <Footer />
+        </ThemeProvider>
+      </body>
     </html>
   )
 }
