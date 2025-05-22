@@ -5,6 +5,7 @@ import { ChevronRight, ArrowRight, Calendar, MapPin, Users } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import NewsletterSignup from "@/components/newsletter-signup"
+import { useEffect, useState } from "react"
 
 const testimonials = [
   {
@@ -57,18 +58,20 @@ const upcomingEvents = [
 ]
 
 export default function ClientPage() {
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  if (!isMounted) {
+    return null
+  }
+
   return (
-    <main className="overflow-hidden min-w-[1200px]">
-      <style jsx global>{`
-        html {
-          min-width: 1200px;
-        }
-        body {
-          min-width: 1200px;
-        }
-      `}</style>
+    <main className="overflow-hidden">
       {/* Hero Section - Redesigned with parallax effect and modern layout */}
-      <section className="relative min-h-screen min-w-[1200px] flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center bg-fixed transform scale-110"
           style={{
@@ -78,14 +81,14 @@ export default function ClientPage() {
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/80" />
 
-        <div className="container px-4 md:px-6 w-[1200px] mx-auto relative z-10 px-4 md:px-6 py-20 md:py-32">
+        <div className="container relative z-10 px-4 md:px-6 py-20 md:py-32">
           <div className="max-w-5xl mx-auto">
             <div className="flex flex-col items-center text-center">
               <div className="inline-block p-2 bg-amber-600/20 backdrop-blur-sm rounded-full mb-8">
                 <span className="text-white/90 text-sm font-medium tracking-wider px-4 py-1">ESTABLISHED 1936</span>
               </div>
 
-              <h1 className="text-7xl font-serif font-light text-white tracking-wide leading-tight mb-8">
+              <h1 className="text-5xl md:text-7xl font-serif font-light text-white tracking-wide leading-tight mb-8">
                 BURMESE VIHAR
                 <br />
                 BODHGAYA
@@ -102,14 +105,14 @@ export default function ClientPage() {
                 <Button
                   asChild
                   size="lg"
-                  className="bg-amber-600 hover:bg-amber-700 rounded-none px-10 py-7 text-lg min-w-[200px] min-h-[60px] text-base"
+                  className="bg-amber-600 hover:bg-amber-700 rounded-none px-10 py-7 text-lg btn-lg"
                 >
                   <Link href="/visit">Experience the Temple</Link>
                 </Button>
                 <Button
                   asChild
                   size="lg"
-                  className="bg-amber-600 hover:bg-amber-700 rounded-none px-10 py-7 text-lg min-w-[200px] min-h-[60px] text-base"
+                  className="bg-amber-600 hover:bg-amber-700 rounded-none px-10 py-7 text-lg btn-lg"
                 >
                   <Link href="/about">Discover Our Story</Link>
                 </Button>
@@ -132,7 +135,7 @@ export default function ClientPage() {
       {/* Featured Programs Section - New visual card-based layout */}
       <section className="py-24 bg-stone-900 text-white relative">
         <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-black to-transparent"></div>
-        <div className="container px-4 md:px-6 w-[1200px] mx-auto">
+        <div className="container px-4 md:px-6">
           <div className="text-center mb-16">
             <span className="text-amber-500 text-sm tracking-widest uppercase font-medium">Our Offerings</span>
             <h2 className="text-4xl md:text-5xl font-serif font-light mt-3 mb-6">Spiritual Journey</h2>
@@ -226,7 +229,7 @@ export default function ClientPage() {
 
       {/* About Preview Section - Redesigned with modern layout */}
       <section className="py-24 bg-white relative">
-        <div className="container px-4 md:px-6 w-[1200px] mx-auto">
+        <div className="container px-4 md:px-6">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div className="order-2 lg:order-1">
               <span className="text-amber-600 text-sm tracking-widest uppercase font-medium">Our Heritage</span>
@@ -270,7 +273,7 @@ export default function ClientPage() {
                 <img
                   src="/historic-burmese-temple.png"
                   alt="Burmese Vihar Temple Exterior"
-                  className="w-full h-auto object-cover relative z-10"
+                  className="w-full h-auto object-cover relative z-10 aspect-maintain"
                 />
                 <div className="absolute -bottom-6 -right-6 w-2/3 h-2/3 bg-stone-100 -z-10"></div>
               </div>
@@ -281,7 +284,7 @@ export default function ClientPage() {
 
       {/* Events Section - Redesigned with modern card layout */}
       <section className="py-24 bg-stone-100 relative">
-        <div className="container px-4 md:px-6 w-[1200px] mx-auto">
+        <div className="container px-4 md:px-6">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16">
             <div>
               <span className="text-amber-600 text-sm tracking-widest uppercase font-medium">Join Us</span>
@@ -351,7 +354,7 @@ export default function ClientPage() {
 
       {/* Testimonials Section - Redesigned with modern layout */}
       <section className="py-24 bg-white relative">
-        <div className="container px-4 md:px-6 w-[1200px] mx-auto">
+        <div className="container px-4 md:px-6">
           <div className="text-center mb-16">
             <span className="text-amber-600 text-sm tracking-widest uppercase font-medium">Testimonials</span>
             <h2 className="text-4xl md:text-5xl font-serif font-light text-stone-800 mt-3 mb-6">Voices of Pilgrims</h2>
@@ -402,7 +405,7 @@ export default function ClientPage() {
 
       {/* Virtual Tour Section - New section */}
       <section className="py-24 bg-stone-900 text-white relative">
-        <div className="container px-4 md:px-6 w-[1200px] mx-auto">
+        <div className="container px-4 md:px-6">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
               <span className="text-amber-500 text-sm tracking-widest uppercase font-medium">Experience</span>
@@ -449,7 +452,7 @@ export default function ClientPage() {
 
       {/* Newsletter Signup - Redesigned */}
       <section className="py-24 bg-amber-50 relative">
-        <div className="container px-4 md:px-6 w-[1200px] mx-auto">
+        <div className="container px-4 md:px-6">
           <div className="max-w-4xl mx-auto">
             <div className="bg-white p-12 shadow-xl relative">
               <div className="absolute top-0 left-0 w-24 h-24 bg-amber-100 -translate-x-6 -translate-y-6 -z-10"></div>
@@ -476,10 +479,10 @@ export default function ClientPage() {
         <div
           className="absolute inset-0 bg-cover bg-center opacity-20"
           style={{
-            backgroundImage: "url('/placeholder.svg?height=1000&width=2000&query=buddhist%20temple%20at%20sunset')",
+            backgroundImage: "url('/buddhist-temple-sunset.png')",
           }}
         />
-        <div className="container px-4 md:px-6 w-[1200px] mx-auto relative z-10">
+        <div className="container px-4 md:px-6 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-4xl md:text-5xl font-serif font-light mb-6">Begin Your Spiritual Journey</h2>
             <div className="h-px w-20 bg-amber-500 mx-auto mb-8"></div>
@@ -492,14 +495,14 @@ export default function ClientPage() {
               <Button
                 asChild
                 size="lg"
-                className="bg-amber-600 hover:bg-amber-700 rounded-none px-10 py-7 text-lg min-w-[200px] min-h-[60px] text-base"
+                className="bg-amber-600 hover:bg-amber-700 rounded-none px-10 py-7 text-lg btn-lg"
               >
                 <Link href="/visit">Plan Your Visit</Link>
               </Button>
               <Button
                 asChild
                 size="lg"
-                className="bg-white text-stone-900 hover:bg-white/90 rounded-none px-10 py-7 text-lg min-w-[200px] min-h-[60px] text-base"
+                className="bg-white text-stone-900 hover:bg-white/90 rounded-none px-10 py-7 text-lg btn-lg"
               >
                 <Link href="/contact">Contact Us</Link>
               </Button>
@@ -507,7 +510,7 @@ export default function ClientPage() {
                 asChild
                 size="lg"
                 variant="outline"
-                className="border-white text-white hover:bg-white/10 rounded-none px-10 py-7 text-lg min-w-[200px] min-h-[60px] text-base"
+                className="border-white text-white hover:bg-white/10 rounded-none px-10 py-7 text-lg btn-lg"
               >
                 <Link href="/donate">Support Our Mission</Link>
               </Button>

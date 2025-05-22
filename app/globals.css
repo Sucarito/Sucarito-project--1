@@ -73,54 +73,52 @@
 
 body {
   font-family: Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
 }
 
-/* Responsive container sizing */
+/* More balanced sizing approach */
 .container {
   width: 100%;
-  max-width: 100%;
-  padding-left: 1rem;
-  padding-right: 1rem;
+  max-width: 1140px;
   margin-left: auto;
   margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
 
-/* Small devices (phones) */
-@media (min-width: 640px) {
-  .container {
-    max-width: 640px;
+/* Prevent extreme text shrinking when zooming out */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2rem !important;
+  }
+  h2 {
+    font-size: 1.75rem !important;
+  }
+  h3 {
+    font-size: 1.5rem !important;
+  }
+  p {
+    font-size: 1rem !important;
+  }
+  .btn-lg {
+    padding: 0.5rem 1rem !important;
+    font-size: 1rem !important;
   }
 }
 
-/* Medium devices (tablets) */
-@media (min-width: 768px) {
-  .container {
-    max-width: 768px;
-  }
-}
-
-/* Large devices (laptops) */
-@media (min-width: 1024px) {
-  .container {
-    max-width: 1024px;
-  }
-}
-
-/* Extra large devices (desktops) */
-@media (min-width: 1280px) {
-  .container {
-    max-width: 1280px;
-  }
-}
-
-/* Ensure buttons maintain minimum size for touch */
+/* Ensure buttons maintain reasonable size */
 button,
 .button {
-  min-height: 44px;
+  min-height: 38px;
 }
 
-/* Ensure images scale properly */
-img {
-  max-width: 100%;
+/* Fix for zoom issues without forcing horizontal scroll */
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Maintain aspect ratios for images */
+.aspect-maintain {
   height: auto;
+  max-width: 100%;
 }
