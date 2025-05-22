@@ -1,57 +1,70 @@
 import { type NextRequest, NextResponse } from "next/server"
 import Stripe from "stripe"
 
-// Check if the Stripe secret key is available
-const stripeSecretKey = process.env.STRIPE_SECRET_KEY
-
-// Initialize Stripe with proper error handling
-let stripe: Stripe | null = null
-
-if (stripeSecretKey) {
-  stripe = new Stripe(stripeSecretKey, {
-    apiVersion: "2023-10-16",
-  })
-} else {
-  console.error("STRIPE_SECRET_KEY is not defined in environment variables")
-}
+// This endpoint is for testing webhooks locally
+// It should be disabled in production
 
 export async function GET(req: NextRequest) {
-  // Only allow in development
+  // Check if we're in development mode
   if (process.env.NODE_ENV !== "development") {
     return NextResponse.json({ error: "This endpoint is only available in development mode" }, { status: 403 })
   }
 
-  // Check if Stripe is properly initialized
-  if (!stripe) {
-    return NextResponse.json({ error: "Stripe is not initialized. Check your environment variables." }, { status: 500 })
-  }
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+    apiVersion: "2023-10-16",
+  })
 
   try {
-    // Create a test payment intent
+    // Create a test PaymentIntent
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: 1000, // $10.00
+      amount: 2000, // $20.00
       currency: "usd",
       payment_method_types: ["card"],
       metadata: {
-        donationType: "general",
+        donationType: "temple_maintenance",
         isMonthly: "false",
       },
     })
 
+    // Create a test webhook event
+    const event = {
+      id: `evt_test_${Date.now()}`,
+      object: "event",
+      api_version: "2023-10-16",
+      created: Math.floor(Date.now() / 1000),
+      data: {
+        object: paymentIntent,
+      },
+      livemode: false,
+      pending_webhooks: 1,
+      request: {
+        id: null,
+        idempotency_key: null,
+      },
+      type: "payment_intent.succeeded",
+    }
+
+    // Make a request to our webhook endpoint
+    const response = await fetch(`${req.nextUrl.origin}/api/webhooks/stripe`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        // Note: In a real webhook, Stripe would sign this
+        // This is just for testing the logic
+        "stripe-signature": "test_signature",
+      },
+      body: JSON.stringify(event),
+    })
+
+    const responseData = await response.json()
+
     return NextResponse.json({
       success: true,
-      message: "Test payment intent created",
-      paymentIntentId: paymentIntent.id,
-      clientSecret: paymentIntent.client_secret,
+      testPaymentIntentId: paymentIntent.id,
+      webhookResponse: responseData,
     })
   } catch (error) {
-    console.error("Error creating test payment intent:", error)
-    return NextResponse.json(
-      {
-        success: false,
-        error: error instanceof Error ? error.message : "An unknown error occurred",
-      },
-      { status: 500 },
-    )
+    console.error("Error in test webhook:", error)
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Unknown error" }, { status: 500 })
   }
 }

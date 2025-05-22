@@ -8,13 +8,10 @@ import { loadStripe } from "@stripe/stripe-js"
 import { Button } from "@/components/ui/button"
 import { Heart } from "lucide-react"
 
-// Get the publishable key from environment variables or use the hardcoded one as fallback
-const stripePublishableKey =
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ||
-  "pk_live_51NdVBlSJFiSxqqevHm9PcDD8dCMbtHUvV9px8ncmow0SZZS2lp7NywzghjFWTGRdCA2aPkhInHWyQmPJgGJt3W5w00s2tZhAET"
-
 // Initialize Stripe
-const stripePromise = loadStripe(stripePublishableKey)
+const stripePromise = loadStripe(
+  "pk_live_51NdVBlSJFiSxqqevHm9PcDD8dCMbtHUvV9px8ncmow0SZZS2lp7NywzghjFWTGRdCA2aPkhInHWyQmPJgGJt3W5w00s2tZhAET",
+)
 
 interface StripePaymentProps {
   clientSecret: string

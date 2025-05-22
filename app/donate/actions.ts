@@ -3,19 +3,10 @@
 import { z } from "zod"
 import Stripe from "stripe"
 
-// Check if the Stripe secret key is available
-const stripeSecretKey = process.env.STRIPE_SECRET_KEY
-
-// Initialize Stripe with proper error handling
-let stripe: Stripe | null = null
-
-if (stripeSecretKey) {
-  stripe = new Stripe(stripeSecretKey, {
-    apiVersion: "2023-10-16",
-  })
-} else {
-  console.error("STRIPE_SECRET_KEY is not defined in environment variables")
-}
+// Initialize Stripe with the secret key
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: "2023-10-16",
+})
 
 // Define validation schema for donation data
 const donationSchema = z.object({
@@ -34,14 +25,6 @@ export type DonationData = z.infer<typeof donationSchema>
 
 export async function createPaymentIntent(data: DonationData) {
   try {
-    // Check if Stripe is properly initialized
-    if (!stripe) {
-      return {
-        success: false,
-        error: "Payment processing is not available at the moment. Please try again later.",
-      }
-    }
-
     // Validate the donation data
     const validatedData = donationSchema.parse(data)
 
@@ -151,14 +134,6 @@ export async function createPaymentIntent(data: DonationData) {
 
 export async function verifyPaymentStatus(paymentIntentId: string) {
   try {
-    // Check if Stripe is properly initialized
-    if (!stripe) {
-      return {
-        success: false,
-        error: "Payment verification is not available at the moment. Please try again later.",
-      }
-    }
-
     const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId)
 
     return {
@@ -178,14 +153,6 @@ export async function verifyPaymentStatus(paymentIntentId: string) {
 
 export async function verifySubscriptionStatus(subscriptionId: string) {
   try {
-    // Check if Stripe is properly initialized
-    if (!stripe) {
-      return {
-        success: false,
-        error: "Subscription verification is not available at the moment. Please try again later.",
-      }
-    }
-
     const subscription = await stripe.subscriptions.retrieve(subscriptionId)
 
     return {

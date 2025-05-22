@@ -3,33 +3,15 @@ import Stripe from "stripe"
 import { headers } from "next/headers"
 import { sendDonationReceiptEmail } from "@/lib/email"
 
-// Check if the Stripe secret key is available
-const stripeSecretKey = process.env.STRIPE_SECRET_KEY
-
-// Initialize Stripe with proper error handling
-let stripe: Stripe | null = null
-
-if (stripeSecretKey) {
-  stripe = new Stripe(stripeSecretKey, {
-    apiVersion: "2023-10-16",
-  })
-} else {
-  console.error("STRIPE_SECRET_KEY is not defined in environment variables")
-}
+// Initialize Stripe with the secret key
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: "2023-10-16",
+})
 
 // You'll need to add this to your environment variables
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET || ""
 
 export async function POST(req: NextRequest) {
-  // Check if Stripe is properly initialized
-  if (!stripe) {
-    console.error("Stripe is not initialized. Check your environment variables.")
-    return NextResponse.json(
-      { error: "Payment processing is not available at the moment. Please try again later." },
-      { status: 500 },
-    )
-  }
-
   const body = await req.text()
   const headersList = headers()
   const signature = headersList.get("stripe-signature")
@@ -95,8 +77,6 @@ export async function POST(req: NextRequest) {
 // Handler functions for different event types
 
 async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent) {
-  if (!stripe) return
-
   console.log(`PaymentIntent succeeded: ${paymentIntent.id}`)
 
   // Get customer details
@@ -168,8 +148,6 @@ async function handleDisputeCreated(dispute: Stripe.Dispute) {
 }
 
 async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
-  if (!stripe) return
-
   console.log(`Subscription created: ${subscription.id}`)
 
   // Here you would typically:
@@ -211,8 +189,6 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
 }
 
 async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
-  if (!stripe) return
-
   console.log(`Subscription deleted: ${subscription.id}`)
 
   // Here you would typically:
@@ -236,8 +212,6 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
 }
 
 async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
-  if (!stripe) return
-
   console.log(`Invoice payment succeeded: ${invoice.id}`)
 
   // Here you would typically:
@@ -265,8 +239,6 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
 }
 
 async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
-  if (!stripe) return
-
   console.log(`Invoice payment failed: ${invoice.id}`)
 
   // Here you would typically:
