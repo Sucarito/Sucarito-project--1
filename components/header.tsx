@@ -1,27 +1,27 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Menu, X } from "lucide-react"
+import Image from "next/image"
 
 const navItems = [
   { name: "Home", href: "/" },
-  { name: "About", href: "#about" },
-  { name: "Schedule", href: "#schedule" },
-  { name: "Events", href: "#events" },
-  { name: "Gallery", href: "#gallery" },
-  { name: "Teachings", href: "#teachings" },
-  { name: "Contact", href: "#contact" },
+  { name: "About", href: "/about" },
+  { name: "Visit", href: "/visit" },
+  { name: "Events", href: "/events" },
+  { name: "Gallery", href: "/gallery" },
+  { name: "Teachings", href: "/teachings" },
+  { name: "Contact", href: "/contact" },
 ]
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-
-  const router = useRouter()
+  const pathname = usePathname()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,94 +32,159 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  const scrollToSection = (href: string) => {
-    setIsMobileMenuOpen(false)
-
-    if (href === "/") {
-      window.scrollTo({ top: 0, behavior: "smooth" })
-      return
+  const isActive = (path: string) => {
+    // For the home page, only match exact "/"
+    if (path === "/") {
+      return pathname === "/" || pathname === ""
     }
 
-    const element = document.querySelector(href)
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" })
+    // For other pages, check if the pathname starts with the path
+    // But make sure we're matching complete segments to avoid partial matches
+    // e.g., /about should not match /about-us
+    const pathSegments = path.split("/").filter(Boolean)
+    const pathnameSegments = pathname.split("/").filter(Boolean)
+
+    if (pathSegments.length === 0) return false
+
+    for (let i = 0; i < pathSegments.length; i++) {
+      if (i >= pathnameSegments.length || pathSegments[i] !== pathnameSegments[i]) {
+        return false
+      }
     }
+
+    return true
   }
 
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isScrolled
-          ? "bg-white/90 backdrop-blur-md shadow-sm py-2"
-          : "py-4 bg-transparent before:absolute before:inset-0 before:bg-gradient-to-b before:from-black/70 before:to-transparent before:z-[-1]"
+        isScrolled ? "bg-white/95 backdrop-blur-md shadow-sm py-3" : "bg-transparent py-6"
       }`}
     >
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between">
-          <Link href="/" className="text-xl font-bold text-amber-700 z-10" onClick={() => scrollToSection("/")}>
-            Burmese Vihar-Bodhgaya
+          <Link href="/" className="flex items-center gap-3">
+            <div className="relative h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden flex items-center justify-center shadow-md">
+              <Image
+                src="/maha-bodhi-temple-logo.png"
+                alt="Maha Bodhi Temple Logo"
+                fill
+                sizes="(max-width: 768px) 56px, 64px"
+                className="object-cover"
+                priority
+              />
+            </div>
+            <div className="flex flex-col">
+              <span
+                className={`font-serif text-lg md:text-xl lg:text-2xl font-medium tracking-wide ${
+                  isScrolled ? "text-amber-800" : "text-white"
+                } transition-colors duration-300`}
+              >
+                Burmese Vihar
+              </span>
+              <span
+                className={`font-serif text-xs md:text-sm tracking-wide ${
+                  isScrolled ? "text-amber-600/80" : "text-amber-100/90"
+                } transition-colors duration-300`}
+              >
+                Maha Bodhi Temple, Bodhgaya
+              </span>
+            </div>
           </Link>
 
-          <nav className="hidden md:flex items-center space-x-1">
+          <nav className="hidden md:flex items-center space-x-1 lg:space-x-2">
             {navItems.map((item) => (
-              <Button
+              <Link
                 key={item.name}
-                variant="ghost"
-                className={`text-sm ${
-                  isScrolled
-                    ? "text-stone-700 hover:text-amber-700 hover:bg-transparent"
-                    : "text-white hover:text-white/80 hover:bg-transparent"
+                href={item.href}
+                className={`px-3 lg:px-4 py-2 text-sm transition-colors duration-300 ${
+                  isActive(item.href)
+                    ? isScrolled
+                      ? "text-amber-700 font-medium"
+                      : "text-amber-400 font-medium"
+                    : isScrolled
+                      ? "text-stone-700 hover:text-amber-700"
+                      : "text-white/90 hover:text-white"
                 }`}
-                onClick={() => scrollToSection(item.href)}
+                aria-current={isActive(item.href) ? "page" : undefined}
               >
                 {item.name}
-              </Button>
+              </Link>
             ))}
+
             <Button
-              className={`ml-2 ${
-                isScrolled ? "bg-amber-600 hover:bg-amber-700" : "bg-white/20 hover:bg-white/30 text-white"
+              asChild
+              className={`ml-2 lg:ml-3 rounded-none px-4 lg:px-6 ${
+                isScrolled
+                  ? "bg-amber-600 hover:bg-amber-700"
+                  : "bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm"
               }`}
-              onClick={() => router.push("/donate")}
             >
-              Donate
+              <Link href="/donate">Donate</Link>
             </Button>
           </nav>
 
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild className="md:hidden">
-              <Button variant="ghost" size="icon" className={isScrolled ? "text-stone-700" : "text-white"}>
+              <Button
+                variant="ghost"
+                size="icon"
+                className={`${isScrolled ? "text-stone-700" : "text-white"} focus:ring-2 focus:ring-amber-500 focus:ring-offset-2`}
+                aria-label="Menu"
+              >
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[250px] sm:w-[300px]">
+            <SheetContent side="right" className="w-[85vw] max-w-[300px] p-0 border-l border-amber-200">
               <div className="flex flex-col h-full">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-lg font-bold text-amber-700">Burmese Vihar-Bodhgaya</h2>
-                  <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(false)}>
-                    <X className="h-5 w-5" />
-                  </Button>
-                </div>
-                <nav className="flex flex-col space-y-1">
-                  {navItems.map((item) => (
+                <div className="p-6 border-b border-amber-100">
+                  <div className="flex items-center gap-3">
+                    <div className="relative h-10 w-10 rounded-full overflow-hidden">
+                      <Image
+                        src="/maha-bodhi-temple-logo.png"
+                        alt="Maha Bodhi Temple Logo"
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                    <div className="flex flex-col">
+                      <h2 className="text-lg font-serif text-amber-800">Burmese Vihar</h2>
+                      <span className="text-xs text-amber-600/80">Maha Bodhi Temple, Bodhgaya</span>
+                    </div>
                     <Button
-                      key={item.name}
                       variant="ghost"
-                      className="justify-start text-stone-700 hover:bg-transparent"
-                      onClick={() => scrollToSection(item.href)}
+                      size="icon"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="ml-auto"
+                      aria-label="Close menu"
+                    >
+                      <X className="h-5 w-5" />
+                    </Button>
+                  </div>
+                </div>
+
+                <nav className="flex flex-col p-6">
+                  {navItems.map((item) => (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      className={`py-4 text-base border-b border-stone-100 ${
+                        isActive(item.href) ? "text-amber-700 font-medium" : "text-stone-700 hover:text-amber-700"
+                      }`}
+                      onClick={() => setIsMobileMenuOpen(false)}
                     >
                       {item.name}
-                    </Button>
+                    </Link>
                   ))}
                 </nav>
-                <div className="mt-auto pt-6">
+
+                <div className="mt-auto p-6 border-t border-amber-100">
                   <Button
-                    className="w-full bg-amber-600 hover:bg-amber-700"
-                    onClick={() => {
-                      setIsMobileMenuOpen(false)
-                      router.push("/donate")
-                    }}
+                    asChild
+                    className="w-full bg-amber-600 hover:bg-amber-700 rounded-none py-6"
+                    onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    Donate
+                    <Link href="/donate">Donate</Link>
                   </Button>
                 </div>
               </div>

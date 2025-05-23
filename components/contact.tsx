@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent } from "@/components/ui/card"
 import { MapPin, Phone, Mail, Clock } from "lucide-react"
+import { Label } from "@/components/ui/label"
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -31,47 +32,49 @@ export default function Contact() {
   }
 
   return (
-    <section id="contact" className="py-20 bg-stone-100">
+    <section id="contact" className="py-12 sm:py-16 md:py-20 bg-stone-100">
       <div className="container px-4 mx-auto">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-stone-800">Contact Us</h2>
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-12 text-stone-800">
+          Contact Us
+        </h2>
 
-        <div className="grid md:grid-cols-2 gap-10">
-          <div>
-            <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-              <h3 className="text-xl font-semibold mb-4 text-stone-800">Contact Information</h3>
-              <div className="space-y-4">
+        <div className="grid md:grid-cols-2 gap-6 sm:gap-8 md:gap-10">
+          <div className="space-y-6 sm:space-y-8">
+            <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+              <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-stone-800">Contact Information</h3>
+              <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-start gap-3">
-                  <MapPin className="h-5 w-5 text-amber-600 mt-0.5" />
+                  <MapPin className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
                   <div>
                     <p className="font-medium text-stone-800">Address</p>
-                    <p className="text-stone-600">Burmese Vihar, Near Mahabodhi Temple</p>
-                    <p className="text-stone-600">Bodhgaya, Gaya District</p>
-                    <p className="text-stone-600">Bihar, India - 824231</p>
+                    <p className="text-stone-600 text-sm sm:text-base">Burmese Vihar, Near Mahabodhi Temple</p>
+                    <p className="text-stone-600 text-sm sm:text-base">Bodhgaya, Gaya District</p>
+                    <p className="text-stone-600 text-sm sm:text-base">Bihar, India - 824231</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <Phone className="h-5 w-5 text-amber-600 mt-0.5" />
+                  <Phone className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
                   <div>
                     <p className="font-medium text-stone-800">Phone</p>
-                    <p className="text-stone-600">+91 123 456 7890</p>
+                    <p className="text-stone-600 text-sm sm:text-base">+91 123 456 7890</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <Mail className="h-5 w-5 text-amber-600 mt-0.5" />
+                  <Mail className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
                   <div>
                     <p className="font-medium text-stone-800">Email</p>
-                    <p className="text-stone-600">info@burmesevihar.org</p>
+                    <p className="text-stone-600 text-sm sm:text-base">info@burmesevihar.org</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <Clock className="h-5 w-5 text-amber-600 mt-0.5" />
+                  <Clock className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
                   <div>
                     <p className="font-medium text-stone-800">Visiting Hours</p>
-                    <p className="text-stone-600">Daily: 6:00 AM - 6:00 PM</p>
-                    <p className="text-stone-600">Office Hours: 9:00 AM - 4:00 PM</p>
+                    <p className="text-stone-600 text-sm sm:text-base">Daily: 6:00 AM - 6:00 PM</p>
+                    <p className="text-stone-600 text-sm sm:text-base">Office Hours: 9:00 AM - 4:00 PM</p>
                   </div>
                 </div>
               </div>
@@ -81,9 +84,9 @@ export default function Contact() {
               <CardContent className="p-0">
                 <div className="aspect-[4/3] bg-stone-200 rounded-lg flex items-center justify-center">
                   <div className="text-center p-4">
-                    <MapPin className="h-8 w-8 text-amber-600 mx-auto mb-2" />
-                    <p className="text-stone-600">Interactive map will be displayed here</p>
-                    <p className="text-sm text-stone-500 mt-2">Google Maps integration</p>
+                    <MapPin className="h-6 w-6 sm:h-8 sm:w-8 text-amber-600 mx-auto mb-2" />
+                    <p className="text-stone-600 text-sm sm:text-base">Interactive map will be displayed here</p>
+                    <p className="text-xs sm:text-sm text-stone-500 mt-2">Google Maps integration</p>
                   </div>
                 </div>
               </CardContent>
@@ -91,42 +94,43 @@ export default function Contact() {
           </div>
 
           <div>
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h3 className="text-xl font-semibold mb-4 text-stone-800">Send Us a Message</h3>
+            <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+              <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-stone-800">Send Us a Message</h3>
               <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-stone-700 mb-1">
-                    Your Name
-                  </label>
-                  <Input
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                    className="border-stone-300 focus-visible:ring-amber-500"
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="block text-sm font-medium text-stone-700 mb-1">
+                      Your Name
+                    </Label>
+                    <Input
+                      id="name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      required
+                      className="border-stone-300 focus-visible:ring-amber-500"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="block text-sm font-medium text-stone-700 mb-1">
+                      Email Address
+                    </Label>
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      required
+                      className="border-stone-300 focus-visible:ring-amber-500"
+                    />
+                  </div>
                 </div>
 
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-stone-700 mb-1">
-                    Email Address
-                  </label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    className="border-stone-300 focus-visible:ring-amber-500"
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="subject" className="block text-sm font-medium text-stone-700 mb-1">
+                <div className="space-y-2">
+                  <Label htmlFor="subject" className="block text-sm font-medium text-stone-700 mb-1">
                     Subject
-                  </label>
+                  </Label>
                   <Input
                     id="subject"
                     name="subject"
@@ -137,22 +141,22 @@ export default function Contact() {
                   />
                 </div>
 
-                <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-stone-700 mb-1">
+                <div className="space-y-2">
+                  <Label htmlFor="message" className="block text-sm font-medium text-stone-700 mb-1">
                     Message
-                  </label>
+                  </Label>
                   <Textarea
                     id="message"
                     name="message"
                     value={formData.message}
                     onChange={handleChange}
                     required
-                    rows={5}
+                    rows={4}
                     className="border-stone-300 focus-visible:ring-amber-500"
                   />
                 </div>
 
-                <Button type="submit" className="w-full bg-amber-600 hover:bg-amber-700">
+                <Button type="submit" className="w-full bg-amber-600 hover:bg-amber-700 py-5 sm:py-6">
                   Send Message
                 </Button>
               </form>

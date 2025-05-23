@@ -1,3 +1,4 @@
+@import "./responsive.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -9,19 +10,6 @@ body {
 @layer utilities {
   .text-balance {
     text-wrap: balance;
-  }
-
-  .bg-buddha-image {
-    background-image: url("/images/buddha-teaching.jpg");
-    background-size: cover;
-    background-position: center;
-  }
-
-  /* Optimized background image for mobile */
-  @media (max-width: 768px) {
-    .bg-buddha-image {
-      background-position: 30% center; /* Focus more on the Buddha figure on mobile */
-    }
   }
 }
 
@@ -104,14 +92,4 @@ body {
   body {
     @apply bg-background text-foreground;
   }
-}
-
-/* Image preloading for faster rendering */
-body::after {
-  position: absolute;
-  width: 0;
-  height: 0;
-  overflow: hidden;
-  z-index: -1;
-  content: url("/images/buddha-teaching.jpg");
 }
