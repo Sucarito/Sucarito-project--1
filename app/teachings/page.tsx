@@ -1,5 +1,11 @@
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import TeachingsPage from "./teachings-page"
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+}
 
 export const metadata: Metadata = {
   title: "Buddhist Teachings & Resources - Burmese Vihar Bodhgaya",

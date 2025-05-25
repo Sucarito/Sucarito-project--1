@@ -1,7 +1,19 @@
+import type { Metadata, Viewport } from "next"
 import { TestTube, Link2, Activity } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+}
+
+export const metadata: Metadata = {
+  title: "Analytics Dashboard - Burmese Vihar",
+  description: "Track and analyze donation patterns and marketing attribution",
+}
 
 export default function AnalyticsPage() {
   return (

@@ -1,8 +1,14 @@
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Calendar, Clock, MapPin, Users, ArrowRight } from "lucide-react"
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+}
 
 export const metadata: Metadata = {
   title: "Events - Burmese Vihar Bodhgaya",

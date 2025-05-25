@@ -1,4 +1,5 @@
 import { Suspense } from "react"
+import type { Metadata, Viewport } from "next"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { AlertCircle } from "lucide-react"
 import { checkStripeConfiguration } from "./actions"
@@ -7,7 +8,13 @@ import DonationForm from "./donation-form"
 import DonationImpact from "./donation-impact"
 import DonationTestimonials from "./donation-testimonials"
 
-export const metadata = {
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+}
+
+export const metadata: Metadata = {
   title: "Transform Lives Through Your Generosity - Burmese Vihar Bodhgaya",
   description:
     "Join our mission to preserve Buddhist teachings and serve the community. Your donation creates lasting impact in the lives of countless individuals seeking peace and wisdom.",

@@ -1,6 +1,12 @@
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+}
 
 export const metadata: Metadata = {
   title: "About Us - Burmese Vihar Bodhgaya",
@@ -16,8 +22,7 @@ export default function AboutPage() {
         <div
           className="absolute inset-0 bg-cover bg-center brightness-[0.85] z-0"
           style={{
-            backgroundImage:
-              "url('/placeholder.svg?height=800&width=1600&query=buddhist%20temple%20architecture%20panorama')",
+            backgroundImage: "url('/buddhist-temple-panorama.png')",
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/40" />
@@ -67,7 +72,7 @@ export default function AboutPage() {
             <div className="relative">
               <div className="bg-white p-3 shadow-lg">
                 <img
-                  src="/placeholder.svg?height=600&width=800&query=historic%20burmese%20buddhist%20monastery%20vintage%20photo"
+                  src="/historic-burmese-monastery.png"
                   alt="Historic photo of Burmese Vihar"
                   className="w-full h-full object-cover"
                 />
@@ -218,11 +223,7 @@ export default function AboutPage() {
                   </div>
                   <div className="relative order-1 md:order-2">
                     <div className="absolute top-0 left-0 md:left-0 w-8 h-8 bg-amber-500 rounded-full transform -translate-x-1/2 md:-translate-x-full"></div>
-                    <img
-                      src="/placeholder.svg?height=300&width=400&query=1930s%20buddhist%20monk%20portrait%20vintage"
-                      alt="Abbot U Dhammetsara"
-                      className="rounded md:ml-8"
-                    />
+                    <img src="/1930s-buddhist-monk-portrait.png" alt="Abbot U Dhammetsara" className="rounded md:ml-8" />
                   </div>
                 </div>
 
@@ -230,7 +231,7 @@ export default function AboutPage() {
                   <div className="relative">
                     <div className="absolute top-0 left-0 md:right-0 w-8 h-8 bg-amber-500 rounded-full transform -translate-x-1/2 md:translate-x-1/2"></div>
                     <img
-                      src="/placeholder.svg?height=300&width=400&query=1950s%20buddhist%20monastery%20burmese%20vintage"
+                      src="/1950s-burmese-monastery.png"
                       alt="Burmese Vihar in the 1950s"
                       className="rounded md:mr-8"
                     />
@@ -255,7 +256,7 @@ export default function AboutPage() {
                   <div className="relative order-1 md:order-2">
                     <div className="absolute top-0 left-0 md:left-0 w-8 h-8 bg-amber-500 rounded-full transform -translate-x-1/2 md:-translate-x-full"></div>
                     <img
-                      src="/placeholder.svg?height=300&width=400&query=1970s%20buddhist%20temple%20expansion%20vintage"
+                      src="/1970s-buddhist-temple-expansion.png"
                       alt="Temple expansion in the 1970s"
                       className="rounded md:ml-8"
                     />
@@ -265,11 +266,7 @@ export default function AboutPage() {
                 <div className="relative grid md:grid-cols-2 gap-8 md:gap-16 items-center">
                   <div className="relative">
                     <div className="absolute top-0 left-0 md:right-0 w-8 h-8 bg-amber-500 rounded-full transform -translate-x-1/2 md:translate-x-1/2"></div>
-                    <img
-                      src="/placeholder.svg?height=300&width=400&query=modern%20buddhist%20meditation%20center"
-                      alt="Modern meditation center"
-                      className="rounded md:mr-8"
-                    />
+                    <img src="/modern-buddhist-meditation-center.png" alt="Modern meditation center" className="rounded md:mr-8" />
                   </div>
                   <div>
                     <h3 className="text-xl font-medium text-stone-800 mb-2">1976–2021</h3>
