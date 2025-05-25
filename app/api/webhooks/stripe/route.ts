@@ -43,6 +43,20 @@ enum ErrorType {
   UNKNOWN = "unknown", // Errors we can't categorize
 }
 
+// Function to track analytics events server-side
+async function trackServerEvent(event: string, properties: Record<string, any>) {
+  try {
+    // In production, you would send this to your analytics service
+    console.log("Server Analytics Event:", { event, properties })
+
+    // You could also send to external analytics services here
+    // await sendToGoogleAnalytics(event, properties)
+    // await sendToMixpanel(event, properties)
+  } catch (error) {
+    console.error("Failed to track server event:", error)
+  }
+}
+
 // Function to categorize errors
 function categorizeError(error: any): ErrorType {
   if (!error) return ErrorType.UNKNOWN
@@ -381,6 +395,15 @@ async function handleEvent(event: Stripe.Event): Promise<void> {
 async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent) {
   console.log(`PaymentIntent succeeded: ${paymentIntent.id}`)
 
+  // Track conversion analytics
+  await trackServerEvent("donation_completed_server", {
+    paymentId: paymentIntent.id,
+    amount: paymentIntent.amount / 100,
+    currency: paymentIntent.currency,
+    donationType: paymentIntent.metadata.donationType || "general",
+    isRecurring: false,
+  })
+
   // Get customer details
   if (paymentIntent.customer) {
     const customer = await stripe!.customers.retrieve(paymentIntent.customer as string)
@@ -410,6 +433,15 @@ async function handlePaymentIntentFailed(paymentIntent: Stripe.PaymentIntent) {
   console.log(`PaymentIntent failed: ${paymentIntent.id}`)
   console.log(`Failure reason: ${paymentIntent.last_payment_error?.message}`)
 
+  // Track failed payment analytics
+  await trackServerEvent("donation_failed_server", {
+    paymentId: paymentIntent.id,
+    amount: paymentIntent.amount / 100,
+    currency: paymentIntent.currency,
+    error: paymentIntent.last_payment_error?.message || "Unknown error",
+    donationType: paymentIntent.metadata.donationType || "general",
+  })
+
   // Here you would typically:
   // 1. Log the failure
   // 2. Notify the customer if appropriate
@@ -435,27 +467,33 @@ async function handleDisputeCreated(dispute: Stripe.Dispute) {
   console.log(`Dispute created: ${dispute.id}`)
   console.log(`Dispute reason: ${dispute.reason}`)
 
+  // Track dispute analytics
+  await trackServerEvent("dispute_created", {
+    disputeId: dispute.id,
+    amount: dispute.amount / 100,
+    reason: dispute.reason,
+    chargeId: dispute.charge,
+  })
+
   // Here you would typically:
   // 1. Log the dispute
   // 2. Notify administrators
   // 3. Begin gathering evidence for dispute response
-
-  // Send alert email to administrators
-  // await sendDisputeAlertEmail({
-  //   amount: dispute.amount / 100,
-  //   reason: dispute.reason,
-  //   chargeId: dispute.charge as string,
-  //   created: new Date(dispute.created * 1000).toISOString()
-  // })
 }
 
 async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
   console.log(`Subscription created: ${subscription.id}`)
 
-  // Here you would typically:
-  // 1. Update your database with the new subscription
-  // 2. Send a welcome email to the subscriber
-  // 3. Set up any necessary resources for the subscriber
+  // Track subscription analytics
+  const firstItem = subscription.items.data[0]
+  const amount = firstItem?.price?.unit_amount ? firstItem.price.unit_amount / 100 : 0
+
+  await trackServerEvent("subscription_created", {
+    subscriptionId: subscription.id,
+    amount,
+    currency: subscription.currency,
+    customerId: subscription.customer,
+  })
 
   // Get customer details
   if (subscription.customer) {
@@ -463,7 +501,6 @@ async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
 
     // Send confirmation email
     if (typeof customer !== "string" && customer.email) {
-      const firstItem = subscription.items.data[0]
       if (firstItem && firstItem.price) {
         await sendDonationReceiptEmail({
           email: customer.email,
@@ -484,6 +521,13 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
   console.log(`Subscription updated: ${subscription.id}`)
   console.log(`New status: ${subscription.status}`)
 
+  // Track subscription updates
+  await trackServerEvent("subscription_updated", {
+    subscriptionId: subscription.id,
+    status: subscription.status,
+    customerId: subscription.customer,
+  })
+
   // Here you would typically:
   // 1. Update your database with the new subscription status
   // 2. Take any necessary actions based on the new status
@@ -493,10 +537,11 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
 async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
   console.log(`Subscription deleted: ${subscription.id}`)
 
-  // Here you would typically:
-  // 1. Update your database to mark the subscription as canceled
-  // 2. Send a cancellation confirmation to the customer
-  // 3. Clean up any resources associated with the subscription
+  // Track subscription cancellation
+  await trackServerEvent("subscription_cancelled", {
+    subscriptionId: subscription.id,
+    customerId: subscription.customer,
+  })
 
   // Get customer details
   if (subscription.customer) {
@@ -516,10 +561,14 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
 async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
   console.log(`Invoice payment succeeded: ${invoice.id}`)
 
-  // Here you would typically:
-  // 1. Update your database with the payment information
-  // 2. Send a receipt to the customer
-  // 3. Process any necessary fulfillment
+  // Track recurring payment success
+  await trackServerEvent("recurring_payment_succeeded", {
+    invoiceId: invoice.id,
+    amount: invoice.amount_paid / 100,
+    currency: invoice.currency,
+    subscriptionId: invoice.subscription,
+    customerId: invoice.customer,
+  })
 
   // For subscription invoices, this is how you'd handle recurring payments
   if (invoice.subscription && invoice.customer) {
@@ -543,10 +592,14 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
 async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
   console.log(`Invoice payment failed: ${invoice.id}`)
 
-  // Here you would typically:
-  // 1. Log the failure
-  // 2. Notify the customer
-  // 3. Take any necessary actions based on your retry policy
+  // Track recurring payment failure
+  await trackServerEvent("recurring_payment_failed", {
+    invoiceId: invoice.id,
+    amount: invoice.amount_due / 100,
+    currency: invoice.currency,
+    subscriptionId: invoice.subscription,
+    customerId: invoice.customer,
+  })
 
   if (invoice.customer) {
     const customer = await stripe!.customers.retrieve(invoice.customer as string)
@@ -590,6 +643,31 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
         currency = subscription.currency || "usd"
         paymentId = subscription.id
       }
+    }
+
+    // Track checkout completion
+    await trackServerEvent("checkout_completed", {
+      sessionId: session.id,
+      amount,
+      currency,
+      donationType: session.metadata?.donationType || "general",
+      isRecurring,
+      paymentId,
+      customerId: session.customer,
+    })
+
+    // Track server-side attribution conversion
+    if (session.metadata?.sessionId) {
+      await trackServerEvent("attribution_conversion_server", {
+        sessionId: session.id,
+        stripeSessionId: session.id,
+        amount,
+        currency,
+        donationType: session.metadata?.donationType || "general",
+        isRecurring,
+        paymentId,
+        customerId: session.customer,
+      })
     }
 
     // Send receipt email if we have customer email
