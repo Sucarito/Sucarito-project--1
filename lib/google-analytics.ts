@@ -56,19 +56,13 @@ class GoogleAnalyticsService {
   }
 
   private initializeGA4() {
-    // Load Google Analytics 4
-    const script = document.createElement("script")
-    script.async = true
-    script.src = `https://www.googletagmanager.com/gtag/js?id=${this.measurementId}`
-    document.head.appendChild(script)
-
-    // Initialize dataLayer and gtag
+    // Initialize dataLayer and gtag before loading script
     window.dataLayer = window.dataLayer || []
     window.gtag = function gtag() {
       window.dataLayer.push(arguments)
     }
 
-    // Configure GA4
+    // Configure GA4 before loading external script
     window.gtag("js", new Date())
     window.gtag("config", this.measurementId, {
       // Enhanced ecommerce settings
@@ -86,6 +80,12 @@ class GoogleAnalyticsService {
         custom_parameter_7: "days_to_conversion",
       },
     })
+
+    // Load Google Analytics 4 script
+    const script = document.createElement("script")
+    script.async = true
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${this.measurementId}`
+    document.head.appendChild(script)
 
     this.isInitialized = true
     console.log("Google Analytics 4 initialized")
