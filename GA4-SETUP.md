@@ -195,7 +195,7 @@ This setup will provide comprehensive tracking of your donation funnel and marke
 
 Now let's update the donation form to use the enhanced tracking:
 
-```tsx file="app/donate/donation-form.tsx"
+\`\`\`tsx file="app/donate/donation-form.tsx"
 [v0-no-op-code-block-prefix]import React, { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { loadStripe } from "@stripe/stripe-js"
