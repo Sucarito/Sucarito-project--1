@@ -4,6 +4,9 @@ import type { Config } from 'tailwindcss'
 
 const config: Config = {
   darkMode: ['class'],
+  future: {
+    respectDefaultRingColorOpacity: true,
+  },
   content: [
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
@@ -11,6 +14,14 @@ const config: Config = {
     '*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
+    colors: {
+      // Override deprecated colors to prevent warnings
+      lightBlue: undefined,
+      warmGray: undefined,
+      trueGray: undefined,
+      coolGray: undefined,
+      blueGray: undefined,
+    },
     extend: {
       colors: {
         background: 'hsl(var(--background))',
