@@ -17,13 +17,13 @@ class GoogleTagManagerService {
 
   constructor(containerId: string) {
     this.containerId = containerId
-
-    if (typeof window !== "undefined") {
-      this.initializeGTM()
-    }
   }
 
   private initializeGTM() {
+    if (typeof window === "undefined" || this.isInitialized) {
+      return
+    }
+
     // Initialize dataLayer
     window.dataLayer = window.dataLayer || []
 
@@ -40,12 +40,19 @@ class GoogleTagManagerService {
     document.head.appendChild(script)
 
     this.isInitialized = true
-    console.log("Google Tag Manager initialized")
+  }
+
+  // Lazy initialization on first use
+  private ensureInitialized() {
+    if (!this.isInitialized && typeof window !== "undefined") {
+      this.initializeGTM()
+    }
   }
 
   // Push events to dataLayer
   pushEvent(event: GTMEvent) {
-    if (!this.isInitialized) return
+    this.ensureInitialized()
+    if (!this.isInitialized || typeof window === "undefined") return
 
     window.dataLayer.push(event)
     console.log("GTM Event:", event)
