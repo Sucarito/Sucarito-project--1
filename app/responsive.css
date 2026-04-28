@@ -1,4 +1,9 @@
-/* Responsive utilities */
+/* Mobile-First Responsive Design System */
+/* This file implements modern responsive design patterns for optimal user experience */
+
+/* ============================================
+   SCROLLBAR UTILITIES
+   ============================================ */
 .hide-scrollbar {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
@@ -6,6 +11,35 @@
 
 .hide-scrollbar::-webkit-scrollbar {
   display: none; /* Chrome, Safari, Opera */
+}
+
+/* Responsive visibility utilities */
+.show-mobile {
+  display: block;
+}
+
+.hide-mobile {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .show-mobile {
+    display: none;
+  }
+  .hide-mobile {
+    display: block;
+  }
+}
+
+/* Image responsiveness - ensures images scale properly */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+picture {
+  display: contents;
 }
 
 /* Responsive typography - can be used with the @apply directive in components */

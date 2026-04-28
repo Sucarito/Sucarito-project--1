@@ -49,26 +49,20 @@ class GoogleAnalyticsService {
   constructor(measurementId: string, apiSecret?: string) {
     this.measurementId = measurementId
     this.apiSecret = apiSecret || ""
-
-    if (typeof window !== "undefined") {
-      this.initializeGA4()
-    }
   }
 
   private initializeGA4() {
-    // Load Google Analytics 4
-    const script = document.createElement("script")
-    script.async = true
-    script.src = `https://www.googletagmanager.com/gtag/js?id=${this.measurementId}`
-    document.head.appendChild(script)
+    if (typeof window === "undefined" || this.isInitialized) {
+      return
+    }
 
-    // Initialize dataLayer and gtag
+    // Initialize dataLayer and gtag before loading script
     window.dataLayer = window.dataLayer || []
     window.gtag = function gtag() {
       window.dataLayer.push(arguments)
     }
 
-    // Configure GA4
+    // Configure GA4 before loading external script
     window.gtag("js", new Date())
     window.gtag("config", this.measurementId, {
       // Enhanced ecommerce settings
@@ -87,13 +81,26 @@ class GoogleAnalyticsService {
       },
     })
 
+    // Load Google Analytics 4 script
+    const script = document.createElement("script")
+    script.async = true
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${this.measurementId}`
+    document.head.appendChild(script)
+
     this.isInitialized = true
-    console.log("Google Analytics 4 initialized")
+  }
+
+  // Lazy initialization on first use
+  private ensureInitialized() {
+    if (!this.isInitialized && typeof window !== "undefined") {
+      this.initializeGA4()
+    }
   }
 
   // Track page views with attribution data
   trackPageView(page_title?: string, page_location?: string, attribution?: any) {
-    if (!this.isInitialized) return
+    this.ensureInitialized()
+    if (!this.isInitialized || typeof window === "undefined") return
 
     const eventData: any = {
       page_title,
@@ -116,7 +123,8 @@ class GoogleAnalyticsService {
 
   // Track custom events
   trackEvent(eventName: string, parameters: Record<string, any> = {}) {
-    if (!this.isInitialized) return
+    this.ensureInitialized()
+    if (!this.isInitialized || typeof window === "undefined") return
 
     window.gtag("event", eventName, parameters)
     console.log("GA4 Event:", eventName, parameters)
@@ -322,7 +330,8 @@ class GoogleAnalyticsService {
 
   // Set user properties
   setUserProperties(properties: Record<string, any>) {
-    if (!this.isInitialized) return
+    this.ensureInitialized()
+    if (!this.isInitialized || typeof window === "undefined") return
 
     window.gtag("config", this.measurementId, {
       user_properties: properties,
@@ -331,7 +340,8 @@ class GoogleAnalyticsService {
 
   // Set custom dimensions
   setCustomDimensions(dimensions: Record<string, any>) {
-    if (!this.isInitialized) return
+    this.ensureInitialized()
+    if (!this.isInitialized || typeof window === "undefined") return
 
     window.gtag("config", this.measurementId, {
       custom_map: dimensions,

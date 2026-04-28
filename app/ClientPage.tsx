@@ -59,14 +59,6 @@ const upcomingEvents = [
 export default function ClientPage() {
   return (
     <main className="overflow-hidden min-w-[1200px]">
-      <style jsx global>{`
-        html {
-          min-width: 1200px;
-        }
-        body {
-          min-width: 1200px;
-        }
-      `}</style>
       {/* Hero Section - Redesigned with parallax effect and modern layout */}
       <section className="relative min-h-screen min-w-[1200px] flex items-center justify-center overflow-hidden">
         <div
